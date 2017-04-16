@@ -3,7 +3,7 @@
 [![npm version](https://badge.fury.io/js/matrix-to-grid.svg)](https://badge.fury.io/js/grid-to-matrix)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stebogit/matrix-to-grid/blob/master/LICENSE)
 
-Takes a matrix of the values and returns a [Point](http://geojson.org/geojson-spec.html#point) grid mapping the values of the matrix as `property` property
+Takes a matrix of the values and returns a [Point](http://geojson.org/geojson-spec.html#point) grid mapping the values of the matrix as `property`
 
 **Parameters**
 
@@ -11,13 +11,13 @@ Takes a matrix of the values and returns a [Point](http://geojson.org/geojson-sp
 
 - `origin` \[**[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [Feature](http://geojson.org/geojson-spec.html#feature-objects)&lt;[Point](http://geojson.org/geojson-spec.html#point)>**] position of the first bottom-left point of the grid
 
--   `cellSize` **[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)** the distance across each cell
+-   `cellSize` \[**[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)**] the distance across each cell
 
 - `property` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] the name of the property of the points which will represent the correspondent matrix value (optional, default `elevation`)
 
-- `props` \[[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)] properties passed to all the points (optional, default `null`)
+- `props` \[**[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)**] properties passed to all the points (optional, default `null`)
 
--   `units` **\[[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)]** miles, kilometers, degrees, or radians (optional, default `kilometers`)
+-   `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles, kilometers, degrees, or radians (optional, default `kilometers`)
 
 **Returns**
 
