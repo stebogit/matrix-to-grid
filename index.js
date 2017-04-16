@@ -17,7 +17,7 @@ var featureCollection = helpers.featureCollection;
  * @returns {FeatureCollection<Point>} grid of points
  *
  * @example
- *    var gridToMatrix = require('grid-to-matrix');
+ *    var matrixToGrid = require('matrix-to-grid');
  *
  *    var matrix = [
  *      [ 1, 13, 20,  9, 10, 13, 18],
@@ -31,7 +31,7 @@ var featureCollection = helpers.featureCollection;
  *    ];
  *    var origin = [-70.823364, -33.553984]
  *
- *    gridToMatrix(matrix, origin, 10);
+ *    matrixToGrid(matrix, origin, 10);
  *    //= pointGrid
  */
 module.exports = function (matrix, origin, cellSize, property, props, units) {
