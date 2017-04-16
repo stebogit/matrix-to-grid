@@ -16,13 +16,13 @@ const fixtures = fs.readdirSync(directories.in).map(filename => {
     return {
         filename,
         name: path.parse(filename).name,
-        geojson: load.sync(directories.in + filename)
+        json: load.sync(directories.in + filename)
     };
 });
 
 test('matrix-to-grid', t => {
-    for (const {filename, name, geojson} of fixtures) {
-        let {matrix, origin, cellSize, props} = geojson;
+    for (const {filename, name, json} of fixtures) {
+        let {matrix, origin, cellSize, props} = json;
         const pointGrid = truncate(matrixToGrid(matrix, origin, cellSize, null, props));
 
         // Add origin to result
@@ -32,8 +32,8 @@ test('matrix-to-grid', t => {
         origin.properties['marker-color'] = '#F00';
         pointGrid.features.push(origin);
 
-        if (process.env.REGEN) write.sync(directories.out + filename, pointGrid);
-            t.deepEquals(pointGrid, load.sync(directories.out + filename), name);
+        if (process.env.REGEN) write.sync(directories.out + name + '.geojson', pointGrid);
+            t.deepEquals(pointGrid, load.sync(directories.out + name + '.geojson'), name);
         }
     t.end();
 });
