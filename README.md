@@ -29,13 +29,13 @@ Returns a \[**[FeatureCollection](http://geojson.org/geojson-spec.html#feature-c
 **npm**
 
 ```sh
-$ npm install grid-to-matrix
+$ npm install matrix-to-grid
 ```
 
 ### Quickstart
 
 ```javascript
-  var gridToMatrix = require('grid-to-matrix');
+  var matrixToGrid = require('matrix-to-grid');
   
   var matrix = [
     [ 1, 13, 20,  9, 10, 13, 18],
@@ -49,7 +49,7 @@ $ npm install grid-to-matrix
   ];
   var origin = [-70.823364, -33.553984];
 
-  gridToMatrix(matrix, origin, 10);
+  matrixToGrid(matrix, origin, 10);
   // = pointGrid
 ```
 
