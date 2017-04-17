@@ -22,8 +22,8 @@ const fixtures = fs.readdirSync(directories.in).map(filename => {
 
 test('matrix-to-grid', t => {
     for (const {filename, name, json} of fixtures) {
-        let {matrix, origin, cellSize, props} = json;
-        const pointGrid = truncate(matrixToGrid(matrix, origin, cellSize, null, props));
+        let {matrix, origin, cellSize, options} = json;
+        const pointGrid = truncate(matrixToGrid(matrix, origin, cellSize, options));
 
         // Add origin to result
         if (Array.isArray(origin)) {

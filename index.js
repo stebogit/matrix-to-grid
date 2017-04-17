@@ -9,16 +9,16 @@ var featureCollection = helpers.featureCollection;
  *
  * @name matrixToGrid
  * @param {Array<Array<number>>} matrix of numbers
- * @param {Point|Array<number>} origin position of the first bottom-left point of the grid
- * @param {number} [cellSize] the distance across each cell
- * @param {string} [property='elevation'] the grid points property name associated with the matrix value
- * @param {Object=} [props=] properties passed to all the points
- * @param {string} [units=kilometers] used in calculating cellSize, can be degrees, radians, miles, or kilometers
+ * @param {Point|Array<number>} origin position of the first bottom-left (South-West) point of the grid
+ * @param {number} cellSize the distance across each cell
+ * @param {Object} options optional parameters
+ * @param {string} [options.zProperty='elevation'] the grid points property name associated with the matrix value
+ * @param {Object} [options.properties={}] GeoJSON properties passed to all the points
+ * @param {string} [options.units=kilometers] used in calculating cellSize, can be degrees, radians, miles, or kilometers
  * @returns {FeatureCollection<Point>} grid of points
  *
  * @example
  *    var matrixToGrid = require('matrix-to-grid');
- *
  *    var matrix = [
  *      [ 1, 13, 20,  9, 10, 13, 18],
  *      [34,  8,  0,  4,  5,  8, 13],
@@ -30,11 +30,10 @@ var featureCollection = helpers.featureCollection;
  *      [18, 13, 10,  9, 78, 13, 18]
  *    ];
  *    var origin = [-70.823364, -33.553984]
- *
  *    matrixToGrid(matrix, origin, 10);
  *    //= pointGrid
  */
-module.exports = function (matrix, origin, cellSize, property, props, units) {
+module.exports = function (matrix, origin, cellSize, options) {
     // validation
     if (!matrix || !Array.isArray(matrix)) throw new Error('matrix is required');
     if (!origin) throw new Error('origin is required');
@@ -49,19 +48,20 @@ module.exports = function (matrix, origin, cellSize, property, props, units) {
     }
 
     // default value
-    property = property || 'elevation';
+    options = options || {};
+    options.zProperty = options.zProperty || 'elevation';
 
     var points = [];
     for (var r = 0; r < matrixRows; r++) {
-        var first = destination(origin, cellSize * r, 0, units);
-        if (props) first.properties = props;
-        first.properties[property] = matrix[matrixRows - 1 - r][0];
+        var first = destination(origin, cellSize * r, 0, options.units);
+        if (options.properties) first.properties = options.properties;
+        first.properties[options.zProperty] = matrix[matrixRows - 1 - r][0];
         points.push(first);
         for (var c = 1; c < matrixCols; c++) {
-            var pt = destination(first, cellSize * c, 90, units);
+            var pt = destination(first, cellSize * c, 90, options.units);
             // add matrix property
-            if (props) pt.properties = props;
-            pt.properties[property] = matrix[matrixRows - 1 - r][c];
+            if (options.properties) pt.properties = options.properties;
+            pt.properties[options.zProperty] = matrix[matrixRows - 1 - r][c];
             points.push(pt);
         }
     }

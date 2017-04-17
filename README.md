@@ -9,15 +9,17 @@ Takes a matrix of the values and returns a [Point](http://geojson.org/geojson-sp
 
 - `matrix` \[**[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<Array<<[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)>>**] of numbers
 
-- `origin` \[**[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [Feature](http://geojson.org/geojson-spec.html#feature-objects)&lt;[Point](http://geojson.org/geojson-spec.html#point)>**] position of the first bottom-left point of the grid
+- `origin` \[**[Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)> | [Feature](http://geojson.org/geojson-spec.html#feature-objects)&lt;[Point](http://geojson.org/geojson-spec.html#point)>**] position of the first bottom-left (South-West) point of the grid
 
 -   `cellSize` \[**[number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)**] the distance across each cell
 
-- `property` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] the name of the property of the points which will represent the correspondent matrix value (optional, default `elevation`)
+- `options` \[**[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)**] optional parameters:
 
-- `props` \[**[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)**] properties passed to all the points (optional, default `null`)
-
--   `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles, kilometers, degrees, or radians (optional, default `kilometers`)
+    - `zProperty` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] the name of the property of the points which will represent the correspondent matrix value (optional, default `elevation`)
+    
+    - `properties` \[**[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)**] GeoJSON properties passed to all the points (optional, default `{}`)
+    
+    - `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles, kilometers, degrees, or radians (optional, default `kilometers`)
 
 **Returns**
 
@@ -32,11 +34,16 @@ Returns a \[**[FeatureCollection](http://geojson.org/geojson-spec.html#feature-c
 $ npm install matrix-to-grid
 ```
 
+**browser (ES5)**
+
+```html
+<script src="https://unpkg.com/matrix-to-grid@2.0.0/dist/matrix-to-grid.min.js"></script>
+```
+
 ### Quickstart
 
 ```javascript
   var matrixToGrid = require('matrix-to-grid');
-  
   var matrix = [
     [ 1, 13, 20,  9, 10, 13, 18],
     [34,  8,  0,  4,  5,  8, 13],
@@ -48,7 +55,6 @@ $ npm install matrix-to-grid
     [18, 13, 10,  9, 78, 13, 18]
   ];
   var origin = [-70.823364, -33.553984];
-
   matrixToGrid(matrix, origin, 10);
   // = pointGrid
 ```

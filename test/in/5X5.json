@@ -8,5 +8,11 @@
   ],
   "origin": [-120.8301, 47.1852],
   "cellSize": 15,
-  "props": { "marker-color": "#FFF"}
+  "options": {
+    "properties": {
+      "marker-color": "#FFF"
+    },
+    "units": "kilometers",
+    "zProperty": "temperature"
+  }
 }
