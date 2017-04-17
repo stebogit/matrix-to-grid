@@ -33,8 +33,8 @@ test('matrix-to-grid', t => {
         pointGrid.features.push(origin);
 
         if (process.env.REGEN) write.sync(directories.out + name + '.geojson', pointGrid);
-            t.deepEquals(pointGrid, load.sync(directories.out + name + '.geojson'), name);
-        }
+        t.deepEquals(pointGrid, load.sync(directories.out + name + '.geojson'), name);
+    }
     t.end();
 });
 
