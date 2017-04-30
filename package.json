@@ -53,7 +53,10 @@
     "write-json-file": "^2.0.0"
   },
   "dependencies": {
-    "@turf/destination": "^4.1.0",
-    "@turf/helpers": "^4.1.0"
+    "@turf/helpers": "^4.1.0",
+    "@turf/invariant": "^4.1.0",
+    "@turf/meta": "^4.1.0",
+    "@turf/point-grid": "^4.1.0",
+    "global-mercator": "^2.7.0"
   }
 }
