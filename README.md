@@ -19,7 +19,7 @@ Takes a matrix of the values and returns a [Point](http://geojson.org/geojson-sp
     
     - `properties` \[**[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)**] GeoJSON properties passed to all the points (optional, default `{}`)
     
-    - `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles, kilometers, degrees, or radians (optional, default `kilometers`)
+    - `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles or kilometers (optional, default `kilometers`)
 
 **Returns**
 

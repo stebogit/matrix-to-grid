@@ -1,11 +1,6 @@
 var helpers = require('@turf/helpers');
 var point = helpers.point;
 var featureCollection = helpers.featureCollection;
-var pointGrid = require('@turf/point-grid');
-var invariant = require('@turf/invariant');
-var getCoords = invariant.getCoords;
-var meta = require('@turf/meta');
-var featureEach = meta.featureEach;
 var mercator = require('global-mercator');
 
 /**
@@ -43,7 +38,7 @@ module.exports = function (matrix, origin, cellSize, options) {
     if (!matrix || !Array.isArray(matrix)) throw new Error('matrix is required');
     if (!origin) throw new Error('origin is required');
     if (Array.isArray(origin)) {
-        origin = point(origin); // Convert array to point
+        origin = point(origin); // Convert GeoJSON to bbox
     }
     // all array same size
     var matrixCols = matrix[0].length;
@@ -56,71 +51,39 @@ module.exports = function (matrix, origin, cellSize, options) {
     options = options || {};
     options.zProperty = options.zProperty || 'elevation';
 
-    var x0 = origin.geometry.coordinates[0];
-    var y0 = origin.geometry.coordinates[1];
-
-    var gridWidth = cellSize * (matrixCols - 1);
-    var gridHight = cellSize * (matrixRows - 1);
-
     if (options.units === 'miles') {
-        gridWidth *= 1.60934; // km
-        gridHight *= 1.60934;
+        cellSize *= 1.60934; // km
     }
+    cellSize *= 1000; // meters
 
-    var originCoordsMeters = mercator.lngLatToMeters([x0, y0]);
-    var xMax = originCoordsMeters[0] + gridWidth * 1000;
-    var yMax = originCoordsMeters[1] + gridHight * 1000;
-    var maxCoords = mercator.metersToLngLat([xMax, yMax]);
+    var originCoordsMeters = mercator.lngLatToMeters(origin.geometry.coordinates);
+    var x0 = originCoordsMeters[0];
+    var y0 = originCoordsMeters[1];
 
-    var extent = [x0, y0, maxCoords[0], maxCoords[1]]; // [ minX, minY, maxX, maxY ]
-
-    var grid = pointGrid(extent, cellSize, options.units, true);
-    var orderedPoints = sortPointsByLatLng(grid);
-
-    // add property value to the points
-    for (var r = 0; r < orderedPoints.length; r++) {
-        for (var c = 0; c < orderedPoints.length; c++) {
-            orderedPoints[r][c].properties[options.zProperty] = matrix[r][c];
+    var points = [];
+    for (var r = 0; r < matrixRows; r++) {
+        // create first point in the row
+        var firstCoordsMeters = [x0, y0 + cellSize * r];
+        var first = point(mercator.metersToLngLat(firstCoordsMeters));
+        first.properties[options.zProperty] = matrix[matrixRows - 1 - r][0];
+        for (var prop in options.properties) {
+            first.properties[prop] = options.properties[prop];
+        }
+        points.push(first);
+        for (var c = 1; c < matrixCols; c++) {
+            // create the other points in the same row
+            var pointCoordsMeters = [x0 + cellSize * c, firstCoordsMeters[1]];
+            var pt = point(mercator.metersToLngLat(pointCoordsMeters));
+            for (var prop2 in options.properties) {
+                pt.properties[prop2] = options.properties[prop2];
+            }
+            // add matrix property
+            var val = matrix[matrixRows - 1 - r][c];
+            pt.properties[options.zProperty] = val;
+            points.push(pt);
         }
     }
 
-    var points = [].concat.apply([], orderedPoints); // flatten arrays
-    var output = featureCollection(points);
-    return output;
+    var grid = featureCollection(points);
+    return grid;
 };
-
-
-/**
- * Sorts points by latitude and longitude, creating a 2-dimensional array of points
- *
- * @private
- * @param {FeatureCollection<Point>} points GeoJSON Point features
- * @returns {Array<Array<Point>>} points by latitude and longitude
- */
-function sortPointsByLatLng(points) {
-    var pointsByLatitude = {};
-
-    // divide points by rows with the same latitude
-    featureEach(points, function (point) {
-        var lat = getCoords(point)[1];
-        if (!pointsByLatitude[lat]) {
-            pointsByLatitude[lat] = [];
-        }
-        pointsByLatitude[lat].push(point);
-    });
-
-    // sort points (with the same latitude) by longitude
-    var orderedRowsByLatitude = Object.keys(pointsByLatitude).map(function (lat) {
-        var row = pointsByLatitude[lat];
-        var rowOrderedByLongitude = row.sort(function (a, b) {
-            return getCoords(a)[0] - getCoords(b)[0];
-        });
-        return rowOrderedByLongitude;
-    });
-
-    // sort rows (of points with the same latitude) by latitude
-    var pointMatrix = orderedRowsByLatitude.sort(function (a, b) {
-        return getCoords(b[0])[1] - getCoords(a[0])[1];
-    });
-    return pointMatrix;
-}

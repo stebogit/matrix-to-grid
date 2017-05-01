@@ -6,12 +6,11 @@
   ],
   "origin": {
     "type": "Feature",
-    "properties": {},
     "geometry": {
       "type": "Point",
       "coordinates": [
-        -120.8301,
-        47.1852
+        0,
+        0
       ]
     }
   },
