@@ -1,0 +1,18 @@
+{
+  "matrix": [
+    [ 7, 12, 66, 14,  3],
+    [ 1, 89, 23, 24, 37],
+    [89,  0, 33,  0,  3],
+    [ 1, 32, 17, 34, 38],
+    [31,  0, 93, 34,  5]
+  ],
+  "origin": [-120.8301, 47.1852],
+  "cellSize": 15,
+  "options": {
+    "properties": {
+      "marker-color": "#F0F"
+    },
+    "units": "miles",
+    "zProperty": "temperature"
+  }
+}

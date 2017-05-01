@@ -1,0 +1,18 @@
+{
+  "matrix": [
+    [11, 12, 13, 14],
+    [21, 22, 23, 24],
+    [31, 32, 33, 34]
+  ],
+  "origin": {
+    "type": "Feature",
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        0,
+        0
+      ]
+    }
+  },
+  "cellSize": 25
+}
