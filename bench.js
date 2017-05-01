@@ -15,9 +15,10 @@ const fixtures = fs.readdirSync(directory).map(filename => {
 /**
  * Benchmark Results
  *
- * 3x4 x 248,559 ops/sec ±1.36% (81 runs sampled)
- * 5X5 x 110,313 ops/sec ±2.40% (78 runs sampled)
- * 8x8 x 45,369 ops/sec ±2.24% (81 runs sampled)
+ * 3x4-at-0 x 43,890 ops/sec ±3.44% (77 runs sampled)
+ * 3x4 x 40,556 ops/sec ±2.42% (78 runs sampled)
+ * 5x5 x 19,733 ops/sec ±2.12% (79 runs sampled)
+ * 8x8 x 7,431 ops/sec ±3.12% (77 runs sampled)
  */
 const suite = new Benchmark.Suite('grid-to-matrix');
 for (const {name, geojson} of fixtures) {

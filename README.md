@@ -1,5 +1,5 @@
 # matrix-to-grid
-[![Build Status](https://travis-ci.org/stebogit/matrix-to-grid.svg?branch=master)](https://travis-ci.org/stebogit/matrix-to-grid)
+<!-- [![Build Status](https://travis-ci.org/stebogit/matrix-to-grid.svg?branch=master)](https://travis-ci.org/stebogit/matrix-to-grid) -->
 [![npm version](https://badge.fury.io/js/matrix-to-grid.svg)](https://badge.fury.io/js/matrix-to-grid)
 [![MIT licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/stebogit/matrix-to-grid/blob/master/LICENSE)
 
@@ -19,7 +19,7 @@ Takes a matrix of the values and returns a [Point](http://geojson.org/geojson-sp
     
     - `properties` \[**[Object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)**] GeoJSON properties passed to all the points (optional, default `{}`)
     
-    - `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles, kilometers, degrees, or radians (optional, default `kilometers`)
+    - `units` \[**[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)**] miles or kilometers (optional, default `kilometers`)
 
 **Returns**
 

@@ -5,6 +5,7 @@ const load = require('load-json-file');
 const write = require('write-json-file');
 const truncate = require('@turf/truncate');
 const point = require('@turf/helpers').point;
+const circle = require('@turf/circle');
 const matrixToGrid = require('./');
 
 const directories = {
@@ -29,8 +30,11 @@ test('matrix-to-grid', t => {
         if (Array.isArray(origin)) {
             origin = point(origin);
         }
-        origin.properties['marker-color'] = '#F00';
-        pointGrid.features.push(origin);
+        var units = options ? options.units : null;
+        var c = circle(origin, cellSize / 15, 20, units);
+        c.properties['stroke'] = '#F00';
+        c.properties['stroke-width'] = 4;
+        pointGrid.features.push(c);
 
         if (process.env.REGEN) write.sync(directories.out + name + '.geojson', pointGrid);
         t.deepEquals(pointGrid, load.sync(directories.out + name + '.geojson'), name);

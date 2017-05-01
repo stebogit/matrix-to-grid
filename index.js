@@ -1,7 +1,7 @@
-var destination = require('@turf/destination');
 var helpers = require('@turf/helpers');
 var point = helpers.point;
 var featureCollection = helpers.featureCollection;
+var mercator = require('global-mercator');
 
 /**
  * Takes a {@link Point} grid and returns a correspondent matrix {Array<Array<number>>}
@@ -14,7 +14,7 @@ var featureCollection = helpers.featureCollection;
  * @param {Object} options optional parameters
  * @param {string} [options.zProperty='elevation'] the grid points property name associated with the matrix value
  * @param {Object} [options.properties={}] GeoJSON properties passed to all the points
- * @param {string} [options.units=kilometers] used in calculating cellSize, can be degrees, radians, miles, or kilometers
+ * @param {string} [options.units=kilometers] used in calculating cellSize, can be miles, or kilometers
  * @returns {FeatureCollection<Point>} grid of points
  *
  * @example
@@ -47,24 +47,43 @@ module.exports = function (matrix, origin, cellSize, options) {
         if (matrix[row].length !== matrixCols) throw new Error('matrix requires all rows of equal size');
     }
 
-    // default value
+    // default values
     options = options || {};
     options.zProperty = options.zProperty || 'elevation';
 
+    if (options.units === 'miles') {
+        cellSize *= 1.60934; // km
+    }
+    cellSize *= 1000; // meters
+
+    var originCoordsMeters = mercator.lngLatToMeters(origin.geometry.coordinates);
+    var x0 = originCoordsMeters[0];
+    var y0 = originCoordsMeters[1];
+
     var points = [];
     for (var r = 0; r < matrixRows; r++) {
-        var first = destination(origin, cellSize * r, 0, options.units);
-        if (options.properties) first.properties = options.properties;
+        // create first point in the row
+        var firstCoordsMeters = [x0, y0 + cellSize * r];
+        var first = point(mercator.metersToLngLat(firstCoordsMeters));
         first.properties[options.zProperty] = matrix[matrixRows - 1 - r][0];
+        for (var prop in options.properties) {
+            first.properties[prop] = options.properties[prop];
+        }
         points.push(first);
         for (var c = 1; c < matrixCols; c++) {
-            var pt = destination(first, cellSize * c, 90, options.units);
+            // create the other points in the same row
+            var pointCoordsMeters = [x0 + cellSize * c, firstCoordsMeters[1]];
+            var pt = point(mercator.metersToLngLat(pointCoordsMeters));
+            for (var prop2 in options.properties) {
+                pt.properties[prop2] = options.properties[prop2];
+            }
             // add matrix property
-            if (options.properties) pt.properties = options.properties;
-            pt.properties[options.zProperty] = matrix[matrixRows - 1 - r][c];
+            var val = matrix[matrixRows - 1 - r][c];
+            pt.properties[options.zProperty] = val;
             points.push(pt);
         }
     }
 
-    return featureCollection(points);
+    var grid = featureCollection(points);
+    return grid;
 };

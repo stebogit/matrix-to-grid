@@ -10,9 +10,9 @@
   "cellSize": 15,
   "options": {
     "properties": {
-      "marker-color": "#FFF"
+      "marker-color": "#F0F"
     },
-    "units": "kilometers",
+    "units": "miles",
     "zProperty": "temperature"
   }
 }
