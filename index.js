@@ -1,7 +1,7 @@
 var helpers = require('@turf/helpers');
 var point = helpers.point;
 var featureCollection = helpers.featureCollection;
-var mercator = require('global-mercator');
+var GeodesyLatLon = require('geodesy').LatLonSpherical;
 
 /**
  * Takes a {@link Point} grid and returns a correspondent matrix {Array<Array<number>>}
@@ -38,9 +38,9 @@ module.exports = function (matrix, origin, cellSize, options) {
     if (!matrix || !Array.isArray(matrix)) throw new Error('matrix is required');
     if (!origin) throw new Error('origin is required');
     if (Array.isArray(origin)) {
-        origin = point(origin); // Convert GeoJSON to bbox
+        origin = point(origin); // Convert coordinates array to point
     }
-    // all array same size
+    // all matrix array have to be of the same size
     var matrixCols = matrix[0].length;
     var matrixRows = matrix.length;
     for (var row = 1; row < matrixRows; row++) {
@@ -56,15 +56,10 @@ module.exports = function (matrix, origin, cellSize, options) {
     }
     cellSize *= 1000; // meters
 
-    var originCoordsMeters = mercator.lngLatToMeters(origin.geometry.coordinates);
-    var x0 = originCoordsMeters[0];
-    var y0 = originCoordsMeters[1];
-
     var points = [];
     for (var r = 0; r < matrixRows; r++) {
         // create first point in the row
-        var firstCoordsMeters = [x0, y0 + cellSize * r];
-        var first = point(mercator.metersToLngLat(firstCoordsMeters));
+        var first = rhumbDestinationPoint(origin, cellSize * r, 0);
         first.properties[options.zProperty] = matrix[matrixRows - 1 - r][0];
         for (var prop in options.properties) {
             first.properties[prop] = options.properties[prop];
@@ -72,8 +67,7 @@ module.exports = function (matrix, origin, cellSize, options) {
         points.push(first);
         for (var c = 1; c < matrixCols; c++) {
             // create the other points in the same row
-            var pointCoordsMeters = [x0 + cellSize * c, firstCoordsMeters[1]];
-            var pt = point(mercator.metersToLngLat(pointCoordsMeters));
+            var pt = rhumbDestinationPoint(first, cellSize * c, 90);
             for (var prop2 in options.properties) {
                 pt.properties[prop2] = options.properties[prop2];
             }
@@ -87,3 +81,23 @@ module.exports = function (matrix, origin, cellSize, options) {
     var grid = featureCollection(points);
     return grid;
 };
+
+
+/**
+ * Returns the destination point having travelled along a rhumb line from the originPoint the given
+ * distance on the  given bearing.
+ *
+ * @private
+ * @param {Point|Array<number>} originPoint - Distance travelled, in same units as earth radius (default: metres).
+ * @param {number} distance - Distance travelled, in same units as earth radius (default: metres).
+ * @param {number} bearing - Bearing in degrees from north.
+ * @returns {Point|Array<number>} Destination point.
+ *
+ */
+function rhumbDestinationPoint(originPoint, distance, bearing) {
+    var coords = originPoint.geometry.coordinates;
+    var pt = new GeodesyLatLon(coords[1], coords[0]);
+    var destination = pt.rhumbDestinationPoint(distance, bearing);
+
+    return point([destination.lon, destination.lat]);
+}
