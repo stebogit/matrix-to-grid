@@ -24,7 +24,7 @@ const fixtures = fs.readdirSync(directories.in).map(filename => {
 test('matrix-to-grid', t => {
     for (const {filename, name, json} of fixtures) {
         let {matrix, origin, cellSize, options} = json;
-        const pointGrid = truncate(matrixToGrid(matrix, origin, cellSize, options));
+        const result = truncate(matrixToGrid(matrix, origin, cellSize, options));
 
         // Add origin to result
         if (Array.isArray(origin)) {
@@ -34,10 +34,10 @@ test('matrix-to-grid', t => {
         var c = circle(origin, cellSize / 15, 20, units);
         c.properties['stroke'] = '#F00';
         c.properties['stroke-width'] = 4;
-        pointGrid.features.push(c);
+        result.features.push(c);
 
-        if (process.env.REGEN) write.sync(directories.out + name + '.geojson', pointGrid);
-        t.deepEquals(pointGrid, load.sync(directories.out + name + '.geojson'), name);
+        if (process.env.REGEN) write.sync(directories.out + name + '.geojson', result);
+        t.deepEquals(result, load.sync(directories.out + name + '.geojson'), name);
     }
     t.end();
 });

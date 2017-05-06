@@ -1,6 +1,6 @@
 {
   "name": "matrix-to-grid",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Takes a matrix array of numbers and returns a grid of GeoJSON points with correspondent property value",
   "main": "index.js",
   "types": "index.d.ts",
@@ -55,6 +55,6 @@
   },
   "dependencies": {
     "@turf/helpers": "4.1.0",
-    "global-mercator": "2.7.0"
+    "geodesy": "1.1.1"
   }
 }
