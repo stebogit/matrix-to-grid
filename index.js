@@ -84,18 +84,18 @@ module.exports = function (matrix, origin, cellSize, options) {
 
 
 /**
- * Returns the destination point having travelled along a rhumb line from the originPoint the given
+ * Returns the destination point having travelled along a rhumb line from the origin the given
  * distance on the  given bearing.
  *
  * @private
- * @param {Point|Array<number>} originPoint - Distance travelled, in same units as earth radius (default: metres).
+ * @param {Point|Array<number>} origin - Initial point
  * @param {number} distance - Distance travelled, in same units as earth radius (default: metres).
  * @param {number} bearing - Bearing in degrees from north.
  * @returns {Point|Array<number>} Destination point.
  *
  */
-function rhumbDestinationPoint(originPoint, distance, bearing) {
-    var coords = originPoint.geometry.coordinates;
+function rhumbDestinationPoint(origin, distance, bearing) {
+    var coords = origin.geometry.coordinates;
     var pt = new GeodesyLatLon(coords[1], coords[0]);
     var destination = pt.rhumbDestinationPoint(distance, bearing);
 
