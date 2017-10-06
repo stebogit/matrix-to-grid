@@ -37,7 +37,6 @@
   },
   "devDependencies": {
     "@turf/circle": "*",
-    "@turf/point-grid": "*",
     "@turf/truncate": "*",
     "benchmark": "*",
     "eslint": "*",
