@@ -17,7 +17,7 @@ test('matrix-to-grid', t => {
         const {matrix, origin, cellSize, options} = load.sync(filepath);
 
         // Calculate results
-        const results = truncate(matrixToGrid(matrix, origin, cellSize, options));
+        let results = matrixToGrid(matrix, origin, cellSize, options);
 
         // Add circle to results
         results.features.push(circle(origin, cellSize / 15, {
@@ -28,6 +28,7 @@ test('matrix-to-grid', t => {
                 'stroke-width': 4
             }
         }));
+        results = truncate(results)
 
         // Save results
         if (process.env.REGEN) write.sync(path.join(out, name + '.geojson'), results);
