@@ -1,16 +1,8 @@
-const Benchmark = require('benchmark');
+const glob = require('glob');
 const path = require('path');
-const fs = require('fs');
 const load = require('load-json-file');
+const Benchmark = require('benchmark');
 const gridToMatrix = require('./');
-
-const directory = path.join(__dirname, 'test', 'in') + path.sep;
-const fixtures = fs.readdirSync(directory).map(filename => {
-  return {
-    name: path.parse(filename).name,
-    geojson: load.sync(directory + filename)
-  };
-});
 
 /**
  * Benchmark Results
@@ -21,11 +13,11 @@ const fixtures = fs.readdirSync(directory).map(filename => {
  * 8x8-at-10 x 18,778 ops/sec ±1.44% (79 runs sampled)
  */
 const suite = new Benchmark.Suite('grid-to-matrix');
-for (const {name, geojson} of fixtures) {
-    let {matrix, origin, cellSize, props} = geojson;
-    suite.add(name, () => gridToMatrix(matrix, origin, cellSize, null, props));
-}
-
+glob.sync(path.join(__dirname, 'test', 'in', '*.json')).forEach(filepath => {
+    const {name} = path.parse(filepath);
+    const {matrix, origin, cellSize, options} = load.sync(filepath);
+    suite.add(name, () => gridToMatrix(matrix, origin, cellSize, options));
+})
 suite
   .on('cycle', e => console.log(String(e.target)))
   .on('complete', () => {})

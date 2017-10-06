@@ -1,3 +1,7 @@
+# Published files
+matrix-to-grid.js
+matrix-to-grid.min.js
+
 # Logs
 logs
 *.log

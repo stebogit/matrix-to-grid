@@ -1,7 +1,5 @@
-var helpers = require('@turf/helpers');
-var point = helpers.point;
-var featureCollection = helpers.featureCollection;
-var GeodesyLatLon = require('geodesy').LatLonSpherical;
+import {isObject, featureCollection} from '@turf/helpers';
+import rhumbDestination from '@turf/rhumb-destination';
 
 /**
  * Takes a {@link Point} grid and returns a correspondent matrix {Array<Array<number>>}
@@ -11,10 +9,10 @@ var GeodesyLatLon = require('geodesy').LatLonSpherical;
  * @param {Array<Array<number>>} matrix of numbers
  * @param {Point|Array<number>} origin position of the first bottom-left (South-West) point of the grid
  * @param {number} cellSize the distance across each cell
- * @param {Object} options optional parameters
+ * @param {Object} [options={}] optional parameters
  * @param {string} [options.zProperty='elevation'] the grid points property name associated with the matrix value
  * @param {Object} [options.properties={}] GeoJSON properties passed to all the points
- * @param {string} [options.units=kilometers] used in calculating cellSize, can be miles, or kilometers
+ * @param {string} [options.units='kilometers'] used in calculating cellSize, can be miles, or kilometers
  * @returns {FeatureCollection<Point>} grid of points
  *
  * @example
@@ -33,13 +31,18 @@ var GeodesyLatLon = require('geodesy').LatLonSpherical;
  *    matrixToGrid(matrix, origin, 10);
  *    //= pointGrid
  */
-module.exports = function (matrix, origin, cellSize, options) {
+export default function matrixToGrid(matrix, origin, cellSize, options) {
+    // Optional parameters
+    options = options || {};
+    if (!isObject(options)) throw new Error('options is invalid');
+    var zProperty = options.zProperty || 'elevation';
+    var properties = options.properties;
+    var units = options.units;
+
     // validation
     if (!matrix || !Array.isArray(matrix)) throw new Error('matrix is required');
     if (!origin) throw new Error('origin is required');
-    if (Array.isArray(origin)) {
-        origin = point(origin); // Convert coordinates array to point
-    }
+
     // all matrix array have to be of the same size
     var matrixCols = matrix[0].length;
     var matrixRows = matrix.length;
@@ -47,57 +50,26 @@ module.exports = function (matrix, origin, cellSize, options) {
         if (matrix[row].length !== matrixCols) throw new Error('matrix requires all rows of equal size');
     }
 
-    // default values
-    options = options || {};
-    options.zProperty = options.zProperty || 'elevation';
-
-    if (options.units === 'miles') {
-        cellSize *= 1.60934; // km
-    }
-    cellSize *= 1000; // meters
-
     var points = [];
     for (var r = 0; r < matrixRows; r++) {
         // create first point in the row
-        var first = rhumbDestinationPoint(origin, cellSize * r, 0);
-        first.properties[options.zProperty] = matrix[matrixRows - 1 - r][0];
-        for (var prop in options.properties) {
-            first.properties[prop] = options.properties[prop];
+        var first = rhumbDestination(origin, cellSize * r, 0, {units: units});
+        first.properties[zProperty] = matrix[matrixRows - 1 - r][0];
+        for (var prop in properties) {
+            first.properties[prop] = properties[prop];
         }
         points.push(first);
         for (var c = 1; c < matrixCols; c++) {
             // create the other points in the same row
-            var pt = rhumbDestinationPoint(first, cellSize * c, 90);
-            for (var prop2 in options.properties) {
-                pt.properties[prop2] = options.properties[prop2];
+            var pt = rhumbDestination(first, cellSize * c, 90, {units: units});
+            for (var prop2 in properties) {
+                pt.properties[prop2] = properties[prop2];
             }
             // add matrix property
             var val = matrix[matrixRows - 1 - r][c];
-            pt.properties[options.zProperty] = val;
+            pt.properties[zProperty] = val;
             points.push(pt);
         }
     }
-
-    var grid = featureCollection(points);
-    return grid;
-};
-
-
-/**
- * Returns the destination point having travelled along a rhumb line from the origin the given
- * distance on the  given bearing.
- *
- * @private
- * @param {Point|Array<number>} origin - Initial point
- * @param {number} distance - Distance travelled, in same units as earth radius (default: metres).
- * @param {number} bearing - Bearing in degrees from north.
- * @returns {Point|Array<number>} Destination point.
- *
- */
-function rhumbDestinationPoint(origin, distance, bearing) {
-    var coords = origin.geometry.coordinates;
-    var pt = new GeodesyLatLon(coords[1], coords[0]);
-    var destination = pt.rhumbDestinationPoint(distance, bearing);
-
-    return point([destination.lon, destination.lat]);
+    return featureCollection(points);
 }
