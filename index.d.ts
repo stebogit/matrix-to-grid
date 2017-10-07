@@ -1,7 +1,12 @@
-/// <reference types="geojson" />
+import { FeatureCollection, Point, Units, Coord } from '@turf/helpers';
 
-import {Points} from '@turf/helpers';
-
-declare function matrixToGrid(matrix: Array<Array<number>>, property?: string): Points;
-declare namespace matrixToGrid { }
-export = matrixToGrid;
+export default function matrixToGrid(
+    matrix: number[][],
+    origin: Coord,
+    cellSize: number,
+    options?: {
+        zProperty?: string,
+        properties?: object,
+        units?: Units
+    }
+): FeatureCollection<Point>;

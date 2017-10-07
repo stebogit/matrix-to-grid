@@ -15,5 +15,6 @@
       ]
     }
   },
-  "cellSize": 25
+  "cellSize": 25,
+  "options": {}
 }
