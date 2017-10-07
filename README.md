@@ -38,7 +38,7 @@ $ npm install matrix-to-grid
 **browser (ES5)**
 
 ```html
-<script src="https://unpkg.com/matrix-to-grid@2.0.0/dist/matrix-to-grid.min.js"></script>
+<script src="https://unpkg.com/matrix-to-grid/matrix-to-grid.min.js"></script>
 ```
 
 ### Quickstart
